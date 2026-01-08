@@ -1,3 +1,5 @@
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/src/widgets/navigator.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' show Platform;
@@ -10,7 +12,7 @@ class NotificationHelper {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
-  Future<void> init() async {
+  Future<void> init({GlobalKey<NavigatorState>? navKey}) async {
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -52,8 +54,6 @@ class NotificationHelper {
           return result.isGranted;
         } else if (status.isPermanentlyDenied) {
           print('Notification permission permanently denied. Open app settings.');
-          // Optionally open app settings
-          // await openAppSettings();
           return false;
         }
 
@@ -110,8 +110,8 @@ class NotificationHelper {
         'event_logger_channel',
         'Event Logger Notifications',
         channelDescription: 'Notifications for the Event Logger package',
-        importance: Importance.max,
-        priority: Priority.high,
+        importance: Importance.none,
+        priority: Priority.defaultPriority,
         showWhen: false,
       );
 
@@ -137,7 +137,7 @@ class NotificationHelper {
       final status = await Permission.notification.status;
       return status.isGranted;
     }
-    return true; // Assume granted for non-Android platforms
+    return true;
   }
 
   /// Open app settings (useful for permanently denied permissions)

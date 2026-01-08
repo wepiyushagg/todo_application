@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:todo/repository/widgets/uihelper.dart';
 import 'package:todo/domain/constant/appcolors.dart';
-import 'package:todo/repository/screens/home/homescreen.dart';
+
+import '../home/event_home_screen.dart';
 
 
 class Splashscreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _SplashscreenState extends State<Splashscreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => const EventHomeScreen(),
         ),
       );
     });

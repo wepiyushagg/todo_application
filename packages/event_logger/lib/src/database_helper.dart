@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'dart:developer' as developer;
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -18,6 +19,8 @@ class DatabaseHelper {
   Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'event_logger.db');
+    developer.log('Database path: $path', name: 'DatabaseHelper');
+    developer.log('You can use a device file explorer to check if this file persists across app launches.', name: 'DatabaseHelper');
     return await openDatabase(
       path,
       version: 1,
@@ -26,6 +29,7 @@ class DatabaseHelper {
   }
 
   Future<void> _onCreate(Database db, int version) async {
+    developer.log('onCreate: Creating new database and events table because it does not exist.', name: 'DatabaseHelper');
     await db.execute('''
       CREATE TABLE events(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,14 +57,29 @@ class DatabaseHelper {
     });
   }
 
-  Future<List<Map<String, dynamic>>> getAllEntries() async {
-      final db = await database;
-      return await db.query('events');
-    }
-
-
   Future<List<Map<String, dynamic>>> getEvents() async {
     final db = await database;
     return await db.query('events', orderBy: 'timestamp DESC');
+  }
+  Future<List<Map<String, dynamic>>> getAllEntries() async {
+    final db = await database;
+    return await db.query('events', orderBy: 'id');
+  }
+
+  /// Deletes all events from the events table.
+  Future<void> deleteAllEvents() async {
+    final db = await database;
+    await db.delete('events');
+    developer.log('All events deleted from the database.', name: 'DatabaseHelper');
+  }
+
+  /// Deletes the entire database file.
+  /// This will cause the database and tables to be recreated on next launch.
+  Future<void> deleteDatabaseFile() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'event_logger.db');
+    await deleteDatabase(path);
+    _database = null; // Force re-initialization
+    developer.log('Database file deleted.', name: 'DatabaseHelper');
   }
 }

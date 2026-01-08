@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_logger/event_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -109,17 +110,28 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      await FirebaseFirestore.instance
-          .collection('todos')
-          .doc(widget.todoId)
-          .update({
-        'title': _titleController.text.trim(),
-        'shortDescription': _shortdescriptionController.text.trim(),
-        'longDescription': _longdescriptionController.text.trim(),
-        'priority': _priority,
-        'status': _status,
-        'dueDate': _dueDate?.toUtc().toIso8601String(),
-      });
+    final updateTodo = {
+      'title': _titleController.text.trim(),
+    'shortDescription': _shortdescriptionController.text.trim(),
+    'longDescription': _longdescriptionController.text.trim(),
+    'priority': _priority,
+    'status': _status,
+    'dueDate': _dueDate?.toUtc().toIso8601String(),
+    };
+
+    await FirebaseFirestore.instance
+        .collection('todos')
+        .doc(widget.todoId)
+        .update(updateTodo);
+
+
+
+      await EventLoggerService().logEvent(
+        eventName: 'update_todo',
+        fromScreen: 'AddTodoListScreen',
+        toScreen: 'HomeScreen',
+        metadata: updateTodo,
+      );
 
     if(mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

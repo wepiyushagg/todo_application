@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_logger/event_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/repository/screens/home/homescreen.dart';
@@ -84,12 +85,12 @@ class _AddTodoListScreenState extends State<AddTodoListScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final now = DateTime.now();
-    final createdAtString = DateFormat("MMMM d, yyyy 'at' h:mm:ss a 'UTC'Z").format(now.toUtc());
+    final createdAtString =
+        DateFormat("MMMM d, yyyy 'at' h:mm:ss a 'UTC'Z").format(now.toUtc());
     final String? dueDateString = _dueDate != null
         ? DateFormat("MMMM d, yyyy 'at' h:mm:ss a 'UTC'Z")
-        .format(_dueDate!.toUtc())
+            .format(_dueDate!.toUtc())
         : null;
-
 
     try {
       final newTodo = {
@@ -103,6 +104,13 @@ class _AddTodoListScreenState extends State<AddTodoListScreen> {
       };
 
       await FirebaseFirestore.instance.collection('todos').add(newTodo);
+
+      await EventLoggerService().logEvent(
+        eventName: 'add_todo',
+        fromScreen: 'AddTodoListScreen',
+        toScreen: 'HomeScreen',
+        metadata: newTodo,
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -120,9 +128,9 @@ class _AddTodoListScreenState extends State<AddTodoListScreen> {
     } catch (e) {
       print('Error saving todo: $e');
       if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to save To-Do')),
-          );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to save To-Do')),
+        );
       }
     }
   }
@@ -181,7 +189,8 @@ class _AddTodoListScreenState extends State<AddTodoListScreen> {
                         value: 'High',
                         child: Row(
                           children: [
-                            CircleAvatar(radius: 12, backgroundColor: Colors.red),
+                            CircleAvatar(
+                                radius: 12, backgroundColor: Colors.red),
                             SizedBox(width: 8),
                             Text('High'),
                           ],
@@ -191,7 +200,8 @@ class _AddTodoListScreenState extends State<AddTodoListScreen> {
                         value: 'Medium',
                         child: Row(
                           children: [
-                            CircleAvatar(radius: 12, backgroundColor: Colors.orange),
+                            CircleAvatar(
+                                radius: 12, backgroundColor: Colors.orange),
                             SizedBox(width: 8),
                             Text('Medium'),
                           ],
@@ -201,7 +211,8 @@ class _AddTodoListScreenState extends State<AddTodoListScreen> {
                         value: 'Low',
                         child: Row(
                           children: [
-                            CircleAvatar(radius: 12, backgroundColor: Colors.green),
+                            CircleAvatar(
+                                radius: 12, backgroundColor: Colors.green),
                             SizedBox(width: 8),
                             Text('Low'),
                           ],

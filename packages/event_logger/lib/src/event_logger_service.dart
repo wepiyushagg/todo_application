@@ -7,7 +7,6 @@ class EventLoggerService {
   factory EventLoggerService() => _instance;
   EventLoggerService._internal();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final NotificationHelper _notificationHelper = NotificationHelper();
 
@@ -22,14 +21,6 @@ class EventLoggerService {
     Map<String, dynamic>? metadata,
   }) async {
     try {
-      // Log to Firebase
-      await _firestore.collection('events').add({
-        'eventName': eventName,
-        'fromScreen': fromScreen,
-        'toScreen': toScreen,
-        'metadata': metadata,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
 
       // Log to SQLite
       final id = await _dbHelper.insertEvent(

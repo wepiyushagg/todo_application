@@ -53,6 +53,12 @@ class DatabaseHelper {
     });
   }
 
+  Future<List<Map<String, dynamic>>> getAllEntries() async {
+      final db = await database;
+      return await db.query('events');
+    }
+
+
   Future<List<Map<String, dynamic>>> getEvents() async {
     final db = await database;
     return await db.query('events', orderBy: 'timestamp DESC');

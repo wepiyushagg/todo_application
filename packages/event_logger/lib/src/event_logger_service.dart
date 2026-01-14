@@ -10,10 +10,6 @@ class EventLoggerService {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final NotificationHelper _notificationHelper = NotificationHelper();
 
-  Future<void> init({GlobalKey<NavigatorState>? navKey}) async {
-    await _notificationHelper.init(navKey: navKey);
-  }
-
   Future<void> logEvent({
     required String eventName,
     required String fromScreen,
@@ -21,7 +17,6 @@ class EventLoggerService {
     Map<String, dynamic>? metadata,
   }) async {
     try {
-      // Log to SQLite
       final id = await _dbHelper.insertEvent(
         eventName: eventName,
         fromScreen: fromScreen,

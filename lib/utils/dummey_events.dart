@@ -1,5 +1,4 @@
 
-
 import 'package:event_logger/event_logger.dart';
 
 class DummeyEvents{
@@ -54,6 +53,9 @@ class DummeyEvents{
       toScreen: 'HomeScreen',
       metadata: deleteTodo,
     );
+  }
+
+  Future<void> event4() async {
   }
 
 

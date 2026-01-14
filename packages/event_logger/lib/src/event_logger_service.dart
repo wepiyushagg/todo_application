@@ -51,4 +51,8 @@ class EventLoggerService {
   Future<List<Map<String, dynamic>>> getLocalEvents() async {
     return await _dbHelper.getEvents();
   }
+
+  Future<void> clearAllEvents() async {
+    await _dbHelper.deleteAllEvents();
+  }
 }

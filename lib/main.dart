@@ -12,7 +12,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseMsg().initFCM(navigatorKey);
-
   runApp(const MyApp());
 }
 

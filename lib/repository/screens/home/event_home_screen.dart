@@ -17,7 +17,6 @@ class EventHomeScreen extends StatelessWidget {
           TextButton(onPressed: () {dummyEvent.event1();}, child: Text(("ADD"))),
           TextButton(onPressed: () {dummyEvent.event2();}, child: Text(("UPDATE"))),
           TextButton(onPressed: () {dummyEvent.event3();}, child: Text(("DELETE"))),
-          TextButton(onPressed: () {dummyEvent.event4();}, child: Text(("FCM notification"))),
         ],
       ),
     );

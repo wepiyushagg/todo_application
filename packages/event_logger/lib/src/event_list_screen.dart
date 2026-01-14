@@ -19,11 +19,29 @@ class _EventListScreenState extends State<EventListScreen> {
     _eventsFuture = _loggerService.getLocalEvents();
   }
 
+  void _refreshEvents() {
+    setState(() {
+      _eventsFuture = _loggerService.getLocalEvents();
+    });
+  }
+
+  void _clearEvents() async {
+    await _loggerService.clearAllEvents();
+    _refreshEvents();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Local Events'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: _clearEvents,
+            tooltip: 'Clear All Events',
+          ),
+        ],
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _eventsFuture,
@@ -46,14 +64,17 @@ class _EventListScreenState extends State<EventListScreen> {
                 return ListTile(
                   title: Text(event['eventName']),
                   subtitle: Text('From: ${event['fromScreen']} To: ${event['toScreen']}'),
-                  trailing: Text(event['timestamp']),
+                  trailing: Text(event['timestamp'] ?? ''),
                   onTap: () {
                     if (metadata != null) {
+                      final prettyJson = const JsonEncoder.withIndent('  ').convert(metadata);
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Metadata'),
-                          content: Text(metadata.toString()),
+                          content: SingleChildScrollView(
+                            child: Text(prettyJson),
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),

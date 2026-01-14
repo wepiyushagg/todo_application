@@ -11,11 +11,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  
-  // FirebaseMsg is now the single source of truth for all notification initialization.
   await FirebaseMsg().initFCM(navigatorKey);
-
-  // The call to EventLoggerService().init() has been removed.
 
   runApp(const MyApp());
 }

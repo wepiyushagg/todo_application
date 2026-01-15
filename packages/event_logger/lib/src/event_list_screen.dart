@@ -9,14 +9,28 @@ class EventListScreen extends StatefulWidget {
   State<EventListScreen> createState() => _EventListScreenState();
 }
 
-class _EventListScreenState extends State<EventListScreen> {
+class _EventListScreenState extends State<EventListScreen> with WidgetsBindingObserver {
   final EventLoggerService _loggerService = EventLoggerService();
   late Future<List<Map<String, dynamic>>> _eventsFuture;
 
   @override
   void initState() {
     super.initState();
-    _eventsFuture = _loggerService.getLocalEvents();
+    _refreshEvents();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshEvents();
+    }
   }
 
   void _refreshEvents() {
@@ -72,9 +86,7 @@ class _EventListScreenState extends State<EventListScreen> {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Metadata'),
-                          content: SingleChildScrollView(
-                            child: Text(prettyJson),
-                          ),
+                          content: SingleChildScrollView(child: Text(prettyJson)),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),

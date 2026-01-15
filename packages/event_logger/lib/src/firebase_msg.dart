@@ -43,9 +43,13 @@ class FirebaseMsg {
     FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessage);
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
 
+    // Handle tap when app is launched from a terminated state
     _msg.getInitialMessage().then((message) {
       if (message != null) {
-        navigatorKey.currentState?.pushNamed('/event-list');
+        // Use a post-frame callback to ensure the navigator is ready.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigatorKey.currentState?.pushNamed('/event-list');
+        });
       }
     });
   }
